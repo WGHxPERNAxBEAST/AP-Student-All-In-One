@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from Screens.logInScreen import logInPage
 from Screens.signUpScreen import signUpPage
 
+
 class HomePage(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
@@ -51,4 +52,3 @@ class HomePage(QtWidgets.QWidget):
 		self.signUpWin = signUpPage()
 		self.signUpWin.show()
 		self.close()
-
