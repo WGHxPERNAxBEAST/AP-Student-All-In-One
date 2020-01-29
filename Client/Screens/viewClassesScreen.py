@@ -17,9 +17,6 @@ class ViewClassesPage(QtWidgets.QWidget):
 
 		self.setWindowTitle('AIO AP Student Resource')
 
-		self.logInBtn.clicked.connect(self.logIn)
-		self.signUpBtn.clicked.connect(self.signUp)
-
 	def homepageLayout(self):
 		titleHbox = QtWidgets.QHBoxLayout()
 		titleHbox.addStretch()

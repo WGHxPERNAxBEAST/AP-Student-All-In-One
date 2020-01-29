@@ -3,6 +3,8 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import Resources.pyqt5Helper as helper
 import Screens
 
+s = helper.connectSocket()
+
 class SignUpPage(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
@@ -27,7 +29,7 @@ class SignUpPage(QtWidgets.QWidget):
 
 		self.setWindowTitle('AIO AP Student Resource - Sign Up')
 
-		self.submitBtn.clicked.connect(self.stage2)
+		self.submitBtn.clicked.connect(self.submit)
 		self.cancelBtn.clicked.connect(self.cancel)
 
 
@@ -55,12 +57,21 @@ class SignUpPage(QtWidgets.QWidget):
 
 		self.setLayout(v_box)
 
+	def submit(self):
+		user = dict()
+		for q in self.form["Questions"]:
+			user[q["Q"]] = q["IN"].text()
+		s.send(b"\x14" + user)
+		response = s.recv(2048)
+		self.stage2()
+
 	def stage2(self):
 		self.stage2Win = SignUpPage2()
 		self.stage2Win.show()
 		self.close()
 
 	def cancel(self):
+		s.close()
 		self.homeWin = Screens.homeScreen.HomePage()
 		self.homeWin.show()
 		self.close()
@@ -75,7 +86,7 @@ class SignUpPage2(QtWidgets.QWidget):
 		self.submitBtn = QtWidgets.QPushButton('Submit')
 		self.cancelBtn = QtWidgets.QPushButton('Cancel')
 		self.qLab = QtWidgets.QLabel('Select all AP Classes you are currently taking:')
-		self.classList = self.makeClassCbList()
+		self.classList = self.makeClassList()
 		self.singUpPage2Layout()
 
 		self.setWindowTitle('AIO AP Student Resource - Sign Up')
@@ -107,25 +118,28 @@ class SignUpPage2(QtWidgets.QWidget):
 		v_box.addLayout(titleHbox)
 		v_box.addStretch()
 		v_box.addLayout(title2Hbox)
-		v_box.addLayout(self.buildCheckBoxListLayout(self.classList))
+		v_box.addLayout(self.buildCheckBoxListLayout())
 		v_box.addStretch()
 		v_box.addLayout(buttonsHbox)
 		v_box.addStretch()
 
 		self.setLayout(v_box)
 
-	def makeClassCbList(self):
-		apClasses = ["Chem", "Physics", "Lang", "Java", "CS Principles", "World"]
-		checkBoxes = []
-		for apClass in apClasses:
-			checkBoxes.append(QtWidgets.QCheckBox(apClass))
-		return checkBoxes
+	def makeClassList(self):
+		apClassNames = ["Chem", "Physics", "Lang", "Java", "CS Principles", "World"]
+		apClasses = []
+		for apClassName in apClassNames:
+			apClass = dict()
+			apClass["name"] = apClassName
+			apClass["box"] = QtWidgets.QCheckBox(apClassName)
+			apClasses.append(apClass)
+		return apClasses
 
-	def buildCheckBoxListLayout(self, checkBoxes):
+	def buildCheckBoxListLayout(self):
 		vBox = QtWidgets.QVBoxLayout()
 		vBox.addStretch()
-		for box in checkBoxes:
-			vBox.addWidget(box)
+		for apClass in self.classList:
+			vBox.addWidget(apClass[box])
 		vBox.addStretch()
 		hBox = QtWidgets.QHBoxLayout()
 		hBox.addStretch()
@@ -134,11 +148,22 @@ class SignUpPage2(QtWidgets.QWidget):
 		return hBox
 
 	def submit(self):
+		for apClass in self.classList:
+			apClass["box"] = apClass["box"].checkState()
+		s.send(b"\x15" + self.classList)
+		response = s.recv(2048)
+		s.send(b"\x16")
+		response = s.recv(2048)
+		self.advance()
+
+	def advance(self):
+		s.close()
 		self.viewClassesWin = Screens.viewClassesScreen.ViewClassesPage()
 		self.viewClassesWin.show()
 		self.close()
 
 	def cancel(self):
+		s.close()
 		self.homeWin = Screens.homeScreen.HomePage()
 		self.homeWin.show()
 		self.close()

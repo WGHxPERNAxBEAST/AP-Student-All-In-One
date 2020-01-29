@@ -1,5 +1,21 @@
 import sys
+import socket
 from PyQt5 import QtWidgets, QtGui, QtCore
+
+def connectSocket():
+	port = 42069
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	IPaddress = "192.168.1.160"
+	connState = False
+	while connState == False:
+		try:
+			s.connect((IPaddress, port))
+			connState = True
+			print('Connection Sucessful')
+		except:
+			print('Cannot connect')
+			time.sleep(1.0)
+	return s
 
 def makeForm(self, ins):
 	form = dict()

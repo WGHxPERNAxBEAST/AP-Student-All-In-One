@@ -3,6 +3,8 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import Resources.pyqt5Helper as helper
 import Screens
 
+s = helper.connectSocket()
+
 class LogInPage(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
@@ -17,6 +19,7 @@ class LogInPage(QtWidgets.QWidget):
 			["Password", "LE", "[a-z_A-Z0-9]{1,20}"]
 		]
 		self.form = helper.makeForm(self, formIn)
+		self.ErrorLab = QtWidgets.QLabel()
 		self.singUpPageLayout()
 
 		self.setWindowTitle('AIO AP Student Resource - Log In')
@@ -35,6 +38,11 @@ class LogInPage(QtWidgets.QWidget):
 		buttonsHbox.addWidget(self.submitBtn)
 		buttonsHbox.addStretch()
 
+		errorHbox = QtWidgets.QHBoxLayout()
+		errorHbox.addStretch()
+		errorHbox.addWidget(self.ErrorLab)
+		errorHbox.addStretch()
+
 		v_box = QtWidgets.QVBoxLayout()
 		v_box.addStretch()
 		v_box.addLayout(titleHbox)
@@ -43,10 +51,30 @@ class LogInPage(QtWidgets.QWidget):
 		v_box.addStretch()
 		v_box.addLayout(buttonsHbox)
 		v_box.addStretch()
+		v_box.addStretch()
+		v_box.addLayout(errorHbox)
+		v_box.addStretch()
 
 		self.setLayout(v_box)
 
 	def submit(self):
+		s.send(b"\x11" + self.form["Questions"][1]["IN"].text())
+		SignInResponse = s.recv(2048)
+		s.send(b"\x12" + self.form["Questions"][2]["IN"].text())
+		SignInResponse = s.recv(2048)
+		s.send(b"\x13")
+		SignInResponse = s.recv(2048)
+		if (SignInResponse != "Password Failed") & (SignInResponse != "Failed"):
+			self.advanceScreen()
+		elif SignInResponse == "Password Failed":
+			self.ErrorLab.setText("Your password is incorrect")
+			self.form["Questions"][2]["IN"].clear()
+		else:
+			self.ErrorLab.setText("Your username is invalid")
+			self.form["Questions"][2]["IN"].clear()
+
+	def advanceScreen(self):
+		s.close()
 		self.viewClassesWin = Screens.viewClassesScreen.ViewClassesPage()
 		self.viewClassesWin.show()
 		self.close()
