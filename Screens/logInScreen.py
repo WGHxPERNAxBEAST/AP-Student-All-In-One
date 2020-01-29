@@ -1,23 +1,30 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 
-class logInPage(QtWidgets.QWidget):
+import Resources.pyqt5Helper as helper
+import Screens
+
+class LogInPage(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
 		self.init_ui()
 
 	def init_ui(self):
-		self.TitleLab = QtWidgets.QLabel('Welcome to the All In One AP Student Resource')
-		self.logInBtn = QtWidgets.QPushButton('Log In')
-		self.signUpBtn = QtWidgets.QPushButton('Sign Up')
+		self.TitleLab = QtWidgets.QLabel('Log-In!')
+		self.submitBtn = QtWidgets.QPushButton('Submit')
+		#	["Q", "TYPE", "REGEXP"] REGEXP is optional
+		formIn = [
+			["Username", "LE", "[a-z_A-Z0-9]{1,20}"],
+			["Password", "LE", "[a-z_A-Z0-9]{1,20}"]
+		]
+		self.form = helper.makeForm(self, formIn)
+		self.singUpPageLayout()
 
-		self.homepageLayout()
+		self.setWindowTitle('AIO AP Student Resource - Log In')
 
-		self.setWindowTitle('AIO AP Student Resource')
+		self.submitBtn.clicked.connect(self.submit)
 
-		self.logInBtn.clicked.connect(self.logIn)
-		self.signUpBtn.clicked.connect(self.signUp)
 
-	def homepageLayout(self):
+	def singUpPageLayout(self):
 		titleHbox = QtWidgets.QHBoxLayout()
 		titleHbox.addStretch()
 		titleHbox.addWidget(self.TitleLab)
@@ -25,27 +32,21 @@ class logInPage(QtWidgets.QWidget):
 
 		buttonsHbox = QtWidgets.QHBoxLayout()
 		buttonsHbox.addStretch()
-		buttonsHbox.addWidget(self.logInBtn)
-		buttonsHbox.addStretch()
-		buttonsHbox.addWidget(self.signUpBtn)
+		buttonsHbox.addWidget(self.submitBtn)
 		buttonsHbox.addStretch()
 
 		v_box = QtWidgets.QVBoxLayout()
 		v_box.addStretch()
 		v_box.addLayout(titleHbox)
 		v_box.addStretch()
+		v_box.addLayout(helper.buildFormLayout(self.form))
+		v_box.addStretch()
 		v_box.addLayout(buttonsHbox)
 		v_box.addStretch()
 
 		self.setLayout(v_box)
 
-	def logIn(self):
-		self.logInWin = NewMod()
-		self.logInWin.show()
+	def submit(self):
+		self.viewClassesWin = Screens.viewClassesScreen.ViewClassesPage()
+		self.viewClassesWin.show()
 		self.close()
-
-	def signUp(self):
-		self.signUpWin = EasyEditor()
-		self.signUpWin.show()
-		self.close()
-

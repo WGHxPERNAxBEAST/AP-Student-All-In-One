@@ -36,6 +36,11 @@ QLabel {
    font-weight: bold;
 }
 
+QCheckBox {
+   color: 'red';
+   font-weight: bold;
+}
+
 QPushButton {
    background-color: 'Dark blue';
    color: 'red';

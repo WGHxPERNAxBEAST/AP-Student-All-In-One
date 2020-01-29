@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import Resources.pyqt5Helper as helper
 import Screens
 
-class HomePage(QtWidgets.QWidget):
+class ViewClassesPage(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
 		self.init_ui()
@@ -41,13 +41,3 @@ class HomePage(QtWidgets.QWidget):
 		v_box.addStretch()
 
 		self.setLayout(v_box)
-
-	def logIn(self):
-		self.logInWin = Screens.logInScreen.LogInPage()
-		self.logInWin.show()
-		self.close()
-
-	def signUp(self):
-		self.signUpWin = Screens.signUpScreen.SignUpPage()
-		self.signUpWin.show()
-		self.close()
