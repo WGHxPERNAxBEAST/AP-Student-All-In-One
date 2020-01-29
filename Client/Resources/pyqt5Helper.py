@@ -1,11 +1,12 @@
 import sys
 import socket
+import time
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 def connectSocket():
-	port = 42069
+	port = 8080
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	IPaddress = "192.168.1.160"
+	IPaddress = "72.74.66.209"
 	connState = False
 	while connState == False:
 		try:

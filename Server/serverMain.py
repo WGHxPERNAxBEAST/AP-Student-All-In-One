@@ -7,7 +7,7 @@ from _thread import *
 
 class server:
 	host = ''
-	port = 42069
+	port = 8080
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	def __init__(self):
 		try:
@@ -15,6 +15,7 @@ class server:
 		except socket.error as e:
 			print("Binding Error:\n\t" + str(e))
 
+		self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.s.listen(5)
 		print('Waiting for a connection.')
 
@@ -37,10 +38,10 @@ class server:
 			elif data[0:1] == b'\x13':
 				reply = self.signIn(username, password)
 			elif data[0:1] == b'\x14':
-				user = data[1:]
+				user = json.loads(str(data[1:]))
 				reply = "NO RESPONSE YET"
 			elif data[0:1] == b'\x15':
-				user["classes"] = data[1:]
+				user["classes"] = json.loads(str(data[1:]))
 				reply = "NO RESPONSE YET"
 			elif data[0:1] == b'\x16':
 				self.addUser(user)

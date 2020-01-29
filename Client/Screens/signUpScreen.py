@@ -1,3 +1,4 @@
+import json
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 import Resources.pyqt5Helper as helper
@@ -61,7 +62,7 @@ class SignUpPage(QtWidgets.QWidget):
 		user = dict()
 		for q in self.form["Questions"]:
 			user[q["Q"]] = q["IN"].text()
-		s.send(b"\x14" + user)
+		s.send(b"\x14" + bytes(json.dumps(user),'utf-8'))
 		response = s.recv(2048)
 		self.stage2()
 
@@ -139,7 +140,7 @@ class SignUpPage2(QtWidgets.QWidget):
 		vBox = QtWidgets.QVBoxLayout()
 		vBox.addStretch()
 		for apClass in self.classList:
-			vBox.addWidget(apClass[box])
+			vBox.addWidget(apClass["box"])
 		vBox.addStretch()
 		hBox = QtWidgets.QHBoxLayout()
 		hBox.addStretch()
@@ -150,7 +151,7 @@ class SignUpPage2(QtWidgets.QWidget):
 	def submit(self):
 		for apClass in self.classList:
 			apClass["box"] = apClass["box"].checkState()
-		s.send(b"\x15" + self.classList)
+		s.send(b"\x15" + bytes(json.dumps(self.classList),'utf-8'))
 		response = s.recv(2048)
 		s.send(b"\x16")
 		response = s.recv(2048)
