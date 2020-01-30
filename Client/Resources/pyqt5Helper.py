@@ -7,11 +7,13 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 def connectSocket():
 	port = 8080
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	# Load in ips which are stored in a gitignored file for security
 	with open('Resources/ips.json', 'r') as fp:
 		ips = json.load(fp)["ips"]
 		fp.close()
+	# Repeatedly attempt to connect to each ip until a connection is made
 	connState = False
-	while connState == False:
+	while not connState:
 		for ip in ips:
 			try:
 				s.connect((ip["addr"], port))
@@ -23,23 +25,26 @@ def connectSocket():
 				time.sleep(0.5)
 	return s
 
+# ins = [Label content, Input type, Optional third input]
 def makeForm(self, ins):
 	form = dict()
 	form["Questions"] = []
 	for inp in ins:
 		q = inp[0]
 		inType = inp[1]
+		#Optional third input
 		try:
-			regexp = inp[2]
+			thirdIn = inp[2]
 		except:
-			regexp = "None"
+			thirdIn = None
 		line = dict()
 		line["Q"] = q
 		line["LAB"] = QtWidgets.QLabel(q)
 		if inType == "LE":
 			line["IN"] = QtWidgets.QLineEdit(self)
-			if regexp != "None":
-				line["IN"].setValidator(QtGui.QRegExpValidator(QtCore.QRegExp(regexp)))
+			# LE third input is a regexp (Regular Expression)
+			if thirdIn is not None:
+				line["IN"].setValidator(QtGui.QRegExpValidator(QtCore.QRegExp(thirdIn)))
 		form["Questions"].append(line)
 	return form
 
@@ -47,7 +52,6 @@ def makeForm(self, ins):
 def buildFormLayout(form):
 	formVBox = QtWidgets.QVBoxLayout()
 	formVBox.addStretch()
-
 	for line in form["Questions"]:
 		lineHbox = QtWidgets.QHBoxLayout()
 		lineHbox.addStretch()
