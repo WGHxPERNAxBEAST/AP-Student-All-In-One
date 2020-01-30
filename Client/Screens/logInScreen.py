@@ -3,11 +3,10 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import Resources.pyqt5Helper as helper
 import Screens
 
-s = helper.connectSocket()
-
 class LogInPage(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
+		self.s = helper.connectSocket()
 		self.init_ui()
 
 	def init_ui(self):
@@ -58,12 +57,12 @@ class LogInPage(QtWidgets.QWidget):
 		self.setLayout(v_box)
 
 	def submit(self):
-		s.send(b"\x11" + self.form["Questions"][1]["IN"].text())
-		SignInResponse = s.recv(2048)
-		s.send(b"\x12" + self.form["Questions"][2]["IN"].text())
-		SignInResponse = s.recv(2048)
-		s.send(b"\x13")
-		SignInResponse = s.recv(2048)
+		self.s.send(b"\x11" + self.form["Questions"][1]["IN"].text())
+		SignInResponse = self.s.recv(2048)
+		self.s.send(b"\x12" + self.form["Questions"][2]["IN"].text())
+		SignInResponse = self.s.recv(2048)
+		self.s.send(b"\x13")
+		SignInResponse = self.s.recv(2048)
 		if (SignInResponse != "Password Failed") & (SignInResponse != "Failed"):
 			self.advanceScreen()
 		elif SignInResponse == "Password Failed":
@@ -74,7 +73,7 @@ class LogInPage(QtWidgets.QWidget):
 			self.form["Questions"][2]["IN"].clear()
 
 	def advanceScreen(self):
-		s.close()
+		self.s.close()
 		self.viewClassesWin = Screens.viewClassesScreen.ViewClassesPage()
 		self.viewClassesWin.show()
 		self.close()

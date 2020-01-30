@@ -4,11 +4,10 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import Resources.pyqt5Helper as helper
 import Screens
 
-s = helper.connectSocket()
-
 class SignUpPage(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
+		self.s = helper.connectSocket()
 		self.init_ui()
 
 	def init_ui(self):
@@ -62,17 +61,18 @@ class SignUpPage(QtWidgets.QWidget):
 		user = dict()
 		for q in self.form["Questions"]:
 			user[q["Q"]] = q["IN"].text()
-		s.send(b"\x14" + bytes(json.dumps(user),'utf-8'))
-		response = s.recv(2048)
+		self.s.send(b"\x14" + bytes(json.dumps(user),'utf-8'))
+		response = self.s.recv(2048)
 		self.stage2()
 
 	def stage2(self):
+		self.s.close()
 		self.stage2Win = SignUpPage2()
 		self.stage2Win.show()
 		self.close()
 
 	def cancel(self):
-		s.close()
+		self.s.close()
 		self.homeWin = Screens.homeScreen.HomePage()
 		self.homeWin.show()
 		self.close()
@@ -80,6 +80,7 @@ class SignUpPage(QtWidgets.QWidget):
 class SignUpPage2(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
+		self.s = helper.connectSocket()
 		self.init_ui()
 
 	def init_ui(self):
@@ -151,20 +152,20 @@ class SignUpPage2(QtWidgets.QWidget):
 	def submit(self):
 		for apClass in self.classList:
 			apClass["box"] = apClass["box"].checkState()
-		s.send(b"\x15" + bytes(json.dumps(self.classList),'utf-8'))
-		response = s.recv(2048)
-		s.send(b"\x16")
-		response = s.recv(2048)
+		self.s.send(b"\x15" + bytes(json.dumps(self.classList),'utf-8'))
+		response = self.s.recv(2048)
+		self.s.send(b"\x16")
+		response = self.s.recv(2048)
 		self.advance()
 
 	def advance(self):
-		s.close()
+		self.s.close()
 		self.viewClassesWin = Screens.viewClassesScreen.ViewClassesPage()
 		self.viewClassesWin.show()
 		self.close()
 
 	def cancel(self):
-		s.close()
+		self.s.close()
 		self.homeWin = Screens.homeScreen.HomePage()
 		self.homeWin.show()
 		self.close()

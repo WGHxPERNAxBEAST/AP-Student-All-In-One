@@ -60,6 +60,7 @@ class server:
 			return "Failed"
 
 	def addUser(self, user):
+		print(f"received user: {user}")
 		with open('Confidential/Users.json', 'r+') as fp:
 			data = json.load(fp)
 			data["users"].append(user)
@@ -67,5 +68,6 @@ class server:
 			json.dump(data, fp, indent=4)
 			fp.truncate()
 			fp.close()
+		print("user saved.")
 
 server()

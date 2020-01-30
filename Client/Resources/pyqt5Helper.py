@@ -6,16 +6,19 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 def connectSocket():
 	port = 8080
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	IPaddress = "72.74.66.209"
+	with open('ips.json', 'r+') as fp:
+		ips = json.load(fp)["ips"]
+		fp.close()
 	connState = False
 	while connState == False:
-		try:
-			s.connect((IPaddress, port))
-			connState = True
-			print('Connection Sucessful')
-		except:
-			print('Cannot connect')
-			time.sleep(1.0)
+		for ip in ips:
+			try:
+				s.connect((ip["addr"], port))
+				connState = True
+				print(f'Connection Successful on {ip["name"]}')
+			except:
+				print(f'Cannot connect to {ip["name"]}')
+				time.sleep(0.5)
 	return s
 
 def makeForm(self, ins):
