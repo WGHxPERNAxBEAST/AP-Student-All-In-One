@@ -23,7 +23,7 @@ class server:
 			conn, addr = self.s.accept()
 			print('connected to: ' + addr[0] + ':' + str(addr[1]))
 			time.sleep(1.5)
-			start_new_thread(self.threaded_client, (conn,))
+			thread.start_new_thread(self.threaded_client, (conn, ))
 
 	def threaded_client(self, conn):
 		while True:

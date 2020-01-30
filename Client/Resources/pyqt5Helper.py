@@ -1,12 +1,13 @@
 import sys
 import socket
 import time
+import json
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 def connectSocket():
 	port = 8080
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	with open('ips.json', 'r+') as fp:
+	with open('Resources/ips.json', 'r') as fp:
 		ips = json.load(fp)["ips"]
 		fp.close()
 	connState = False
@@ -16,6 +17,7 @@ def connectSocket():
 				s.connect((ip["addr"], port))
 				connState = True
 				print(f'Connection Successful on {ip["name"]}')
+				break
 			except:
 				print(f'Cannot connect to {ip["name"]}')
 				time.sleep(0.5)
