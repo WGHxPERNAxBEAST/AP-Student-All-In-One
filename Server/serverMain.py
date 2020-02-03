@@ -4,7 +4,6 @@ import threading
 import time
 from _thread import *
 
-
 class server:
 	host = ''
 	port = 8080
@@ -23,7 +22,7 @@ class server:
 			conn, addr = self.s.accept()
 			print('connected to: ' + addr[0] + ':' + str(addr[1]))
 			time.sleep(1.5)
-			thread.start_new_thread(self.threaded_client, (conn, ))
+			_thread.start_new_thread(self.threaded_client, (conn, ))
 
 	def threaded_client(self, conn):
 		while True:

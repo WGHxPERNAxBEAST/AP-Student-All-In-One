@@ -21,7 +21,7 @@ class SignUpPage(QtWidgets.QWidget):
 			["Password", "LE", "[a-z_A-Z0-9]{1,20}"],
 			["Grade", "LE", "[0-9]{1,2}"],
 			["GPA", "LE", "\d\.\d*"],
-			["Sex(M/F)", "LE", "([M],[F]){1}"], #REGEX Broken
+			["Sex(M/F)", "LE", "([M]|[F]){1}"],
 			["Age", "LE", "[0-9]{1,2}"]
 		]
 		self.form = helper.makeForm(self, formIn)
