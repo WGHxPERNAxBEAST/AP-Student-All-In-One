@@ -14,15 +14,15 @@ class SignUpPage(QtWidgets.QWidget):
 		self.TitleLab = QtWidgets.QLabel('Sign-Up!')
 		self.submitBtn = QtWidgets.QPushButton('Submit')
 		self.cancelBtn = QtWidgets.QPushButton('Cancel')
-		#	["Q", "TYPE", "REGEXP"] REGEXP is optional
+		#	["Label", "TYPE", Optional third (REGEXP or Option list)]
 		formIn = [
 			["Email", "LE", "([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})"],
 			["Username", "LE", "[a-z_A-Z0-9]{1,20}"],
 			["Password", "LE", "[a-z_A-Z0-9]{1,20}"],
 			["Grade", "LE", "[0-9]{1,2}"],
-			["GPA", "LE", "\d\.\d*"],
-			["Sex(M/F)", "LE", "([M]|[F]){1}"],
-			["Age", "LE", "[0-9]{1,2}"]
+			["GPA", "LE", "[0-5]{1}\.\d*"],
+			["Sex", "DD", ["Male", "Female", "Other"]],
+			["Age", "LE", "[1-2]{1}[0-9]{1}"]
 		]
 		self.form = helper.makeForm(self, formIn)
 		self.singUpPageLayout()
@@ -60,7 +60,10 @@ class SignUpPage(QtWidgets.QWidget):
 	def submit(self):
 		user = dict()
 		for q in self.form["Questions"]:
-			user[q["Q"]] = q["IN"].text()
+			if q["TYPE"] == "LE":
+				user[q["Q"]] = q["IN"].text()
+			elif q["TYPE"] == "DD":
+				user[q["Q"]] = q["IN"].currentText()
 		self.s.send(b"\x14" + bytes(json.dumps(user),'utf-8'))
 		response = self.s.recv(2048)
 		self.stage2()

@@ -39,12 +39,19 @@ def makeForm(self, ins):
 			thirdIn = None
 		line = dict()
 		line["Q"] = q
+		line["TYPE"] = inType
 		line["LAB"] = QtWidgets.QLabel(q)
-		if inType == "LE":
+		if inType == "LE": #Line Edit
 			line["IN"] = QtWidgets.QLineEdit(self)
 			# LE third input is a regexp (Regular Expression)
 			if thirdIn is not None:
 				line["IN"].setValidator(QtGui.QRegExpValidator(QtCore.QRegExp(thirdIn)))
+		elif inType == "DD": #Drop Down
+			line["IN"] = QtWidgets.QComboBox(self)
+			if thirdIn is not None:
+				line["IN"].addItem("Select an option")
+				for option in thirdIn:
+					line["IN"].addItem(option)
 		form["Questions"].append(line)
 	return form
 
