@@ -19,12 +19,13 @@ class SignUpPage(QtWidgets.QWidget):
 			["Email", "LE", "([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})"],
 			["Username", "LE", "[a-z_A-Z0-9]{1,20}"],
 			["Password", "LE", "[a-z_A-Z0-9]{1,20}"],
-			["Grade", "LE", "[0-9]{1,2}"],
+			["Grade", "DD", ["8","9","10","11","12"]],
 			["GPA", "LE", "[0-5]{1}\.\d*"],
 			["Sex", "DD", ["Male", "Female", "Other"]],
 			["Age", "LE", "[1-2]{1}[0-9]{1}"]
 		]
 		self.form = helper.makeForm(self, formIn)
+		self.form["Questions"][2]["IN"].setEchoMode(QtWidgets.QLineEdit.Password)
 		self.singUpPageLayout()
 
 		self.setWindowTitle('AIO AP Student Resource - Sign Up')

@@ -12,18 +12,21 @@ class LogInPage(QtWidgets.QWidget):
 	def init_ui(self):
 		self.TitleLab = QtWidgets.QLabel('Log-In!')
 		self.submitBtn = QtWidgets.QPushButton('Submit')
+		self.cancelBtn = QtWidgets.QPushButton('Cancel')
 		#	["Q", "TYPE", "REGEXP"] REGEXP is optional
 		formIn = [
 			["Username", "LE", "[a-z_A-Z0-9]{1,20}"],
 			["Password", "LE", "[a-z_A-Z0-9]{1,20}"]
 		]
 		self.form = helper.makeForm(self, formIn)
+		self.form["Questions"][1]["IN"].setEchoMode(QtWidgets.QLineEdit.Password)
 		self.ErrorLab = QtWidgets.QLabel()
 		self.singUpPageLayout()
 
 		self.setWindowTitle('AIO AP Student Resource - Log In')
 
 		self.submitBtn.clicked.connect(self.submit)
+		self.cancelBtn.clicked.connect(self.cancel)
 
 
 	def singUpPageLayout(self):
@@ -33,6 +36,8 @@ class LogInPage(QtWidgets.QWidget):
 		titleHbox.addStretch()
 
 		buttonsHbox = QtWidgets.QHBoxLayout()
+		buttonsHbox.addStretch()
+		buttonsHbox.addWidget(self.cancelBtn)
 		buttonsHbox.addStretch()
 		buttonsHbox.addWidget(self.submitBtn)
 		buttonsHbox.addStretch()
@@ -71,6 +76,12 @@ class LogInPage(QtWidgets.QWidget):
 		else:
 			self.ErrorLab.setText("Your username is invalid")
 			self.form["Questions"][2]["IN"].clear()
+
+	def cancel(self):
+		self.s.close()
+		self.homeWin = Screens.homeScreen.HomePage()
+		self.homeWin.show()
+		self.close()
 
 	def advanceScreen(self):
 		self.s.close()
